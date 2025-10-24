@@ -120,15 +120,16 @@
 
   .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 
-  .card-head{height:64px}
+ .card-head {
+  background: linear-gradient(to right, #7b68ee, #8a2be2);
+  height: 40px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
 
-  .card[data-color] .card-head{
-
-    background:linear-gradient(180deg,
-
-     color-mix(in srgb, var(--cat-color, #9ab7e6), #fff 70%), var(--cat-color, #9ab7e6));
-
-  }
 
   .card-body{padding:16px}
 
