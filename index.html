@@ -12,7 +12,8 @@
     --radius:16px; --shadow:0 8px 28px rgba(15,38,64,.08);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font:17px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  /* font 17 -> 16 */
+  body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
   .hidden{display:none!important}
   .wrap{max-width:1200px;margin:0 auto;padding:16px}
 
@@ -26,13 +27,14 @@
   .layout{display:grid;grid-template-columns:280px 1fr;gap:16px}
 
   /* --- Search field emphasis --- */
+  /* 18px -> 17px; 48 -> 46 */
   #search{
     flex:1; min-width:260px;
-    font-size:18px;
+    font-size:17px;
     padding:14px 16px;
     border:2px solid #a8c4ec;
     box-shadow:0 2px 10px rgba(30,112,193,.12);
-    height:48px;
+    height:46px;
   }
   #search:focus{
     outline:none;
@@ -65,7 +67,6 @@
   .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   /* Card header uses the category color; soft pastel gradient */
   .card[data-color] .card-head{
-    /* create a light gradient from the category color */
     background: linear-gradient(
       135deg,
       color-mix(in srgb, var(--cat-color, #9ab7e6), #ffffff 70%) 0%,
@@ -80,12 +81,15 @@
                 0 2px 4px rgba(0,0,0,.05);
   }
   .card-body{padding:16px}
-  .title{font-weight:800;margin:0 0 6px;font-size:1.05rem}
-  .small{font-size:14px;color:#5b6b84}
-  .alias{color:var(--primary);font-weight:800}
-  pre{white-space:pre-wrap;font-size:16px;color:#1d3657;background:#fafcff;border:1px dashed #e1ecfb;border-radius:12px;padding:12px;max-height:240px;overflow:auto;margin:8px 0 0}
+  /* 1.05rem -> 1rem */
+  .title{font-weight:800;margin:0 0 6px;font-size:1rem}
+  /* 14 -> 13.5 */
+  .small{font-size:13.5px;color:#5b6b84}
+  /* 16 -> 15 */
+  pre{white-space:pre-wrap;font-size:15px;color:#1d3657;background:#fafcff;border:1px dashed #e1ecfb;border-radius:12px;padding:12px;max-height:240px;overflow:auto;margin:8px 0 0}
   mark{background:#fff3a1;padding:0 .12em;border-radius:4px}
   .hl{outline:3px solid #8AC0FF;transition:outline-color .6s ease}
+  .alias{color:var(--primary);font-weight:800}
 
   /* Login */
   .center{display:grid;place-items:center;min-height:100dvh;padding:24px}
@@ -111,12 +115,15 @@
     .layout{ grid-template-columns: 1fr; gap: 12px; }
     .sidebar{ border-radius: 12px; padding: 10px; }
     .toolbar{ gap: 10px; }
-    #search{ flex: 1; min-width: 0; width: 100%; height: 44px; font-size: 16px; }
+    /* 16 -> 15.5; 44 -> 42 */
+    #search{ flex: 1; min-width: 0; width: 100%; height: 42px; font-size: 15.5px; }
     #prevBtn,#nextBtn,#newBtn,#settingsBtn{ height: 40px; padding: 8px 12px; }
     .card{ border-radius: 12px; }
     .card-body{ padding: 14px; }
-    .title{ font-size: 1.02rem; line-height: 1.25; }
-    pre{ font-size: 15px; max-height: 40vh; }
+    /* 1.02rem -> 0.98rem */
+    .title{ font-size: 0.98rem; line-height: 1.25; }
+    /* 15 -> 14.5 */
+    pre{ font-size: 14.5px; max-height: 40vh; }
     #hitCount{ min-width: auto; }
   }
 </style>
@@ -643,7 +650,7 @@ Return precautions discussed, including but not limited to: worsening or persist
 
   /* ---------- Boot ---------- */
   function load(){
-    seedIfEmpty();         // <-- repopulates macros if storage is empty
+    seedIfEmpty();
     data = migrate(getAll());
     categories = getCategories();
     renderSidebar();
@@ -660,7 +667,6 @@ Return precautions discussed, including but not limited to: worsening or persist
         if (e.key === "Enter") { e.preventDefault(); btn?.click(); }
       });
     });
-    // Auto-focus username for convenience
     user?.focus();
   });
 })();
