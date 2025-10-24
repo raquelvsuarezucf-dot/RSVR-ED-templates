@@ -1,2 +1,0 @@
-# RSVR-ED-templates
-templates
