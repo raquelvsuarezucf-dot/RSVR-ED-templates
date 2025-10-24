@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>RVSRED Templates — Local</title>
 <meta name="description" content="Emergency Medicine documentation templates — No PHI stored.">
 <style>
@@ -12,11 +12,23 @@
     --radius:16px; --shadow:0 8px 28px rgba(15,38,64,.08);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--bg),var(--bg2));
+    color:var(--text);
+    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
   .hidden{display:none!important}
   .wrap{max-width:1200px;margin:0 auto;padding:16px}
 
-  header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,var(--bg),#e6effd);border-bottom:1px solid var(--border)}
+  header{
+    position:sticky;top:0;z-index:10;
+    background:linear-gradient(180deg,var(--bg),#e6effd);
+    border-bottom:1px solid var(--border);
+    padding-top:env(safe-area-inset-top);
+  }
   .toolbar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .input,textarea,.btn,select{font:inherit}
@@ -28,6 +40,10 @@
   /* Search */
   #search{flex:1;min-width:260px;font-size:17px;padding:14px 16px;border:2px solid #a8c4ec;box-shadow:0 2px 10px rgba(30,112,193,.12);height:46px}
   #search:focus{outline:none;border-color:#1E70C1;box-shadow:0 0 0 4px rgba(30,112,193,.18),0 6px 22px rgba(30,112,193,.18)}
+  /* Alias quick menu */
+  #aliasMenu{position:absolute;left:0;right:0;top:100%;margin-top:6px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  #aliasMenu button{display:flex;justify-content:space-between;width:100%;border:none;background:#fff;padding:10px 12px;font:inherit;cursor:pointer}
+  #aliasMenu button:hover{background:#f3f7ff}
 
   /* Sidebar */
   .sidebar{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:12px}
@@ -77,12 +93,15 @@
   .danger{background:#ffe9e8;border-color:#ffc8c4;color:#7f1d1d}
   .soft{opacity:.8}
 
+  /* Utility */
+  .relative{position:relative}
+
   @media (max-width:900px){
     .layout{grid-template-columns:1fr;gap:12px}
     .sidebar{border-radius:12px;padding:10px}
     .toolbar{gap:10px}
-    #search{flex:1;min-width:0;width:100%;height:42px;font-size:15.5px}
-    #prevBtn,#nextBtn,#newBtn,#settingsBtn{height:40px;padding:8px 12px}
+    #search{flex:1;min-width:0;width:100%;height:44px;font-size:16px} /* >=16 to prevent iOS zoom */
+    #prevBtn,#nextBtn,#newBtn,#settingsBtn,#exportBtn,#importBtn,#backupBtn{height:40px;padding:8px 12px}
     .card{border-radius:12px}
     .card-body{padding:14px}
     .title{font-size:.98rem;line-height:1.25}
@@ -111,10 +130,13 @@
   <!-- App -->
   <div id="app" class="hidden">
     <header>
-      <div class="wrap toolbar">
+      <div class="wrap toolbar relative">
         <div class="row" style="flex:1">
-          <input id="search" class="input" type="search" aria-label="Search templates"
-                 placeholder="Search…  (Enter = Next • Shift+Enter = Prev • .alias to copy)" />
+          <div style="position:relative;flex:1">
+            <input id="search" class="input" type="search" aria-label="Search templates"
+                   placeholder="Search…  (Enter = Next • Shift+Enter = Prev • .alias to copy)" />
+            <div id="aliasMenu" class="hidden" role="listbox" aria-label="Alias matches"></div>
+          </div>
           <button id="prevBtn" class="btn" title="Previous result">Prev</button>
           <button id="nextBtn" class="btn" title="Next result">Next</button>
           <span id="hitCount" class="small" style="min-width:80px;text-align:center;color:#2a3b55"></span>
@@ -122,7 +144,13 @@
         <div class="row">
           <button id="newBtn" class="btn">New</button>
           <button id="settingsBtn" class="btn" title="Manage categories">⚙️ Settings</button>
+          <button id="exportBtn" class="btn" title="Export data to JSON">Export</button>
+          <button id="importBtn" class="btn" title="Import JSON into this device">Import</button>
+          <button id="backupBtn" class="btn" title="Download timestamped backup">Backup</button>
         </div>
+      </div>
+      <div class="wrap small" style="padding-top:6px;color:#405676">
+        Tip: Data is saved to this device. Use Export/Backup to move to your phone (Import on phone).
       </div>
     </header>
 
@@ -166,449 +194,4 @@
         <input id="fAliasSuffix" class="input" placeholder="e.g., viral  → .pedsviral" />
       </div>
       <div style="height:6px"></div>
-      <label class="small">Body</label>
-      <textarea id="fBody" rows="12" class="input" style="height:260px"></textarea>
-      <div class="actions">
-        <button id="dupBtn" class="btn">Duplicate</button>
-        <button id="delBtn" class="btn danger">Delete</button>
-        <button id="saveBtn" class="btn primary">Save</button>
-        <button id="closeEd" class="btn">Close</button>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- Settings -->
-  <dialog id="settings">
-    <div class="content">
-      <h3 style="margin:0 0 10px">Manage Categories</h3>
-      <div class="settings-grid soft">
-        <div class="hdr">Category</div>
-        <div class="hdr">Prefix</div>
-        <div class="hdr">Color</div>
-        <div class="hdr">Actions</div>
-      </div>
-      <div id="catRows" style="display:grid;gap:8px;margin:8px 0 12px"></div>
-      <div class="row" style="justify-content:space-between">
-        <button id="addCatBtn" class="btn">+ Add Category</button>
-        <div class="row">
-          <span class="pill">Changes save instantly</span>
-          <button id="closeSettings" class="btn">Close</button>
-        </div>
-      </div>
-    </div>
-  </dialog>
-
-<script>
-(() => {
-  const $ = s => document.querySelector(s);
-
-  const listEl = $("#list"),
-        searchEl = $("#search"),
-        toastEl = $("#toast"),
-        settingsDlg = $("#settings"),
-        editorDlg = $("#editor"),
-        prevBtn = $("#prevBtn"),
-        nextBtn = $("#nextBtn"),
-        newBtn = $("#newBtn"),
-        settingsBtn = $("#settingsBtn"),
-        hitCount = $("#hitCount");
-
-  const LKEY="rvsred-macros", EXPKEY="rvsred-expanded", CKEY="rvsred-categories";
-  const LOGIN_USER="EDtemplates", LOGIN_PASS="odynophagia";
-
-  const rid=()=>crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);
-  const toast = t => { toastEl.textContent=t; toastEl.classList.remove("hidden"); setTimeout(()=>toastEl.classList.add("hidden"),1600); };
-
-  /* Categories store */
-  function defaultCategories(){
-    return {"Pediatrics":{color:"#1E70C1",prefix:"peds"},"ED Communication":{color:"#6C5CE7",prefix:"edc"},"Other":{color:"#9ab7e6",prefix:"other"}};
-  }
-  function getCategories(){ try{ return JSON.parse(localStorage.getItem(CKEY)) || defaultCategories(); } catch{ return defaultCategories(); } }
-  function setCategories(map){ localStorage.setItem(CKEY, JSON.stringify(map)); }
-  function ensureCategory(g){
-    const cats=getCategories();
-    if(!cats[g]){ cats[g]={color:"#9ab7e6", prefix:(g||"other").toLowerCase().replace(/\s+/g,'')||"other"}; setCategories(cats); }
-  }
-  let categories = getCategories();
-  const colorForGroup = g => (categories[g]?.color)||"#9ab7e6";
-  const prefixForGroup = g => (categories[g]?.prefix)||"other";
-
-  /* Login */
-  function showApp(){ $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); load(); $("#search").focus(); }
-  $("#loginBtn").onclick=()=>{ ($("#u").value.trim()===LOGIN_USER&&$("#p").value===LOGIN_PASS) ? showApp() : ($("#err").textContent="Invalid credentials."); };
-
-  /* Storage */
-  const getAll = () => { try{return JSON.parse(localStorage.getItem(LKEY)||"[]")}catch{return[]} };
-  const setAll = a => localStorage.setItem(LKEY, JSON.stringify(a));
-
-  /* Seed */
-  function seedIfEmpty(){
-    if(getAll().length) return;
-    const now=Date.now();
-    setAll([
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Viral / Febrile Illness",alias:"pedsviral",body:`...[trimmed for brevity]...`,updatedAt:now},
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Streptococcal Pharyngitis",alias:"pedspharyn",body:`...[trimmed]...`,updatedAt:now},
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Otitis Media",alias:"pedsom",body:`...[trimmed]...`,updatedAt:now},
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Pneumonia",alias:"pedspna",body:`...[trimmed]...`,updatedAt:now},
-      {id:rid(),group:"ED Communication",sub:"Sign-Out",title:"Sign-Out — Giving",alias:"signoutgive",body:`...`,updatedAt:now},
-      {id:rid(),group:"ED Communication",sub:"Sign-Out",title:"Sign-Out — Receiving",alias:"signoutrecv",body:`...`,updatedAt:now}
-    ]);
-  }
-
-  /* Migration */
-  function migrate(items){
-    const mapOldToNew = { viralpeds:"pedsviral", pedstrep:"pedspharyn", pedsphay:"pedspharyn" };
-    let changed=false;
-    for(const m of items){ if(mapOldToNew[m.alias]){ m.alias=mapOldToNew[m.alias]; changed=true; } }
-    if(changed) setAll(items);
-    return items;
-  }
-
-  /* State */
-  let data=[], current=null;
-  let filter = {group:"All", sub:null};
-  let expanded = new Set(JSON.parse(localStorage.getItem(EXPKEY)||'[]'));
-
-  /* Helpers to refresh UI */
-  const refresh = () => { categories=getCategories(); renderSidebar(); renderList(); };
-
-  /* Sidebar (shows ALL categories, even empty) */
-  function buildTree(){
-    const cats = getCategories();
-    const tree = {};
-    for (const g of Object.keys(cats)) tree[g] = { count: 0, subs: {} };
-    for(const m of data){
-      const g=m.group||"Other", s=m.sub||"";
-      if(!tree[g]) tree[g]={count:0,subs:{}};
-      tree[g].count++;
-      if(s){ tree[g].subs[s] ??= 0; tree[g].subs[s]++; }
-    }
-    return tree;
-  }
-
-  function renderSidebar(){
-    const catsMap = getCategories();
-    const tree = buildTree();
-    const order = Object.keys(catsMap).sort((a,b)=>a.localeCompare(b));
-    const allCount = data.length;
-
-    let html = `<div class="cat ${filter.group==='All'?'active':''}" data-g="All"><span class="groupHead"><span class="caret">▾</span> All</span><span class="badge">${allCount}</span></div>`;
-
-    for(const g of order){
-      ensureCategory(g);
-      const isOpen = expanded.has(g);
-      const caret = isOpen ? "▾" : "▸";
-      const col = colorForGroup(g);
-      const count = tree[g]?.count || 0;
-
-      html += `<div class="cat ${filter.group===g && !filter.sub?'active':''}" data-g="${g}" data-color style="--cat-color:${col}">
-        <span class="groupHead"><span class="caret">${caret}</span> ${g}</span>
-        <span class="badge">${count}</span>
-      </div>`;
-
-      const subs = Object.keys(tree[g]?.subs||{}).sort((a,b)=>a.localeCompare(b));
-      const cls = `subs ${isOpen?'open':'closed'}`;
-      html += `<div class="${cls}" data-parent="${g}">`;
-
-      if (subs.length === 0) {
-        html += `<div class="sub" data-g="${g}" data-s="" data-color style="--cat-color:${col};opacity:.65;pointer-events:none">
-          <span>(no subgroups yet)</span><span class="badge">0</span>
-        </div>`;
-      } else {
-        for(const s of subs){
-          const active = filter.group===g && filter.sub===s ? "active" : "";
-          html += `<div class="sub ${active}" data-g="${g}" data-s="${s}" data-color style="--cat-color:${col}">
-            <span>${s}</span><span class="badge">${tree[g].subs[s]}</span>
-          </div>`;
-        }
-      }
-      html += `</div>`;
-    }
-
-    $("#cats").innerHTML = html;
-
-    $("#cats").querySelectorAll(".cat").forEach(el=>{
-      el.onclick = ()=>{
-        const g = el.dataset.g;
-        if(g==="All"){ filter={group:"All", sub:null}; renderList(); renderSidebar(); return; }
-        if(expanded.has(g)) expanded.delete(g); else expanded.add(g);
-        localStorage.setItem(EXPKEY, JSON.stringify([...expanded]));
-        filter={group:g, sub:null};
-        renderList(); renderSidebar();
-      };
-    });
-    $("#cats").querySelectorAll(".sub").forEach(el=>{
-      const s = el.dataset.s;
-      if(s==="") return;
-      el.onclick = ()=>{ filter={group:el.dataset.g, sub:el.dataset.s}; renderList(); renderSidebar(); };
-    });
-  }
-
-  /* Cards */
-  const esc=s=>(s||"").replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function renderList(){
-    const q=(searchEl.value||"").trim().toLowerCase();
-    const byFilter = m => (filter.group==="All" || m.group===filter.group) && (filter.sub? m.sub===filter.sub : true);
-    const items=data.filter(m => byFilter(m) && (!q || (m.title+m.alias+m.group+m.sub+m.body).toLowerCase().includes(q)));
-    $("#list").innerHTML = items.map(m=>{
-      ensureCategory(m.group);
-      const col = colorForGroup(m.group);
-      return `
-      <article class="card" id="card-${m.id}" data-color style="--cat-color:${col}">
-        <div class="card-head"></div>
-        <div class="card-body">
-          <div class="row" style="justify-content:space-between;align-items:flex-start">
-            <div>
-              <h3 class="title">${esc(m.title)}</h3>
-              <div class="small"><span class="alias">.${esc(m.alias)}</span> · ${esc(m.group)} / ${esc(m.sub||'')}</div>
-            </div>
-            <div class="row">
-              <button class="btn primary" data-action="copy" data-id="${m.id}">Copy</button>
-              <button class="btn" data-action="edit" data-id="${m.id}">Edit</button>
-            </div>
-          </div>
-          <pre>${esc(m.body||"")}</pre>
-        </div>
-      </article>`;
-    }).join("");
-
-    document.querySelectorAll("[data-action='copy']").forEach(b=>b.onclick=()=>copy(b.dataset.id));
-    document.querySelectorAll("[data-action='edit']").forEach(b=>b.onclick=()=>openEditor(b.dataset.id));
-
-    highlight(normalQuery());
-  }
-
-  async function copy(id){ const m=data.find(x=>x.id===id); try{await navigator.clipboard.writeText(m.body||"");}catch{} toast("Copied"); }
-
-  /* Editor */
-  function populateGroupOptions(){
-    const gSel=$("#fGroup");
-    const cats=Object.keys(categories).sort((a,b)=>a.localeCompare(b));
-    gSel.innerHTML = cats.map(g=>`<option value="${g}">${g}</option>`).join("");
-  }
-  function populateSubSuggestions(group){
-    const d=$("#subOptions");
-    const subs=[...new Set(data.filter(x=>x.group===group).map(x=>x.sub).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-    d.innerHTML=subs.map(s=>`<option value="${s}">`).join("");
-  }
-  function updateAliasPrefix(){ $("#aliasPrefix").textContent = "."+prefixForGroup($("#fGroup").value); }
-
-  function openEditor(id, defaults){
-    const blank = {
-      id: null,
-      group: defaults?.group || (filter.group && filter.group !== "All" ? filter.group : (Object.keys(categories)[0] || "Pediatrics")),
-      sub: defaults?.sub || filter.sub || "",
-      title: "", alias: "", body: ""
-    };
-    current = data.find(x=>x.id===id) || blank;
-    $("#edTitle").textContent = current.id ? "Edit Macro" : "New Macro";
-
-    populateGroupOptions();
-    $("#fGroup").value=current.group || Object.keys(categories)[0];
-    populateSubSuggestions($("#fGroup").value);
-    $("#fSub").value=current.sub || "";
-    updateAliasPrefix();
-
-    const pref = prefixForGroup($("#fGroup").value);
-    const suffix = (current.alias||"").toLowerCase().startsWith(pref) ? (current.alias||"").slice(pref.length) : "";
-    $("#fAliasSuffix").value = suffix;
-    $("#fTitle").value=current.title||"";
-    $("#fBody").value=current.body||"";
-
-    $("#fGroup").onchange = ()=>{ populateSubSuggestions($("#fGroup").value); updateAliasPrefix(); };
-
-    editorDlg.showModal();
-  }
-
-  $("#closeEd").onclick=()=>editorDlg.close();
-
-  $("#saveBtn").onclick=()=>{
-    const group=$("#fGroup").value.trim();
-    const sub=$("#fSub").value.trim();
-    const title=$("#fTitle").value.trim();
-    const suffix=($("#fAliasSuffix").value||"").trim().toLowerCase().replace(/\s+/g,'');
-    const alias = prefixForGroup(group) + suffix;
-    const body=$("#fBody").value;
-    if(!group||!title||!suffix){toast("Group, Title & alias suffix required");return;}
-    const m = current.id ? current : {id:rid()};
-    Object.assign(m,{group,sub,title,alias,body,updatedAt:Date.now()});
-    upsert(m); editorDlg.close(); refresh(); toast("Saved");
-  };
-
-  $("#delBtn").onclick=()=>{
-    if(!current.id){editorDlg.close();return;}
-    if(confirm("Delete this macro?")){
-      data=data.filter(x=>x.id!==current.id); setAll(data); editorDlg.close(); refresh(); toast("Deleted");
-    }
-  };
-  $("#dupBtn").onclick=()=>{
-    const group=$("#fGroup").value||current.group;
-    const suffix=($("#fAliasSuffix").value||"copy").replace(/\s+/g,'').toLowerCase();
-    const m={...current,id:rid(),title:(current.title||"Untitled")+" (copy)",alias:prefixForGroup(group)+suffix,updatedAt:Date.now()};
-    data.unshift(m); setAll(data); refresh(); toast("Duplicated");
-  };
-
-  function upsert(m){ const i=data.findIndex(x=>x.id===m.id); if(i>=0) data[i]=m; else data.unshift(m); setAll(data); }
-
-  /* Search / nav */
-  let hits=[],hitIdx=-1;
-  const normalQuery=()=>{const q=(searchEl.value||"").trim();return q.startsWith(".")?"":q.toLowerCase();}
-  function updateCounter(){ if(!hits.length){ hitCount.textContent=""; return; } hitCount.textContent = `${hitIdx>=0 ? hitIdx+1 : 0}/${hits.length}`; }
-  function highlight(q){
-    document.querySelectorAll(".card pre").forEach(p=>{
-      p.innerHTML=p.textContent; if(!q) return;
-      const r=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),"gi");
-      p.innerHTML=p.innerHTML.replace(r,m=>`<mark>${m}</mark>`);
-    });
-    hits=[...document.querySelectorAll(".card mark")].map(m=>m.closest(".card").id.replace("card-",""));
-    hitIdx=-1; updateCounter();
-  }
-  function gotoNext(){ if(!hits.length) return; hitIdx=(hitIdx+1)%hits.length; const el=document.getElementById("card-"+hits[hitIdx]); el?.scrollIntoView({behavior:"smooth",block:"center"}); el?.classList.add("hl"); setTimeout(()=>el?.classList.remove("hl"),1200); updateCounter(); }
-  function gotoPrev(){ if(!hits.length) return; hitIdx=(hitIdx<=0?hits.length-1:hitIdx-1); const el=document.getElementById("card-"+hits[hitIdx]); el?.scrollIntoView({behavior:"smooth",block:"center"}); el?.classList.add("hl"); setTimeout(()=>el?.classList.remove("hl"),1200); updateCounter(); }
-
-  prevBtn.onclick=gotoPrev;
-  nextBtn.onclick=gotoNext;
-
-  /* NEW always works (even if Settings is open) */
-  newBtn.onclick = () => {
-    if (settingsDlg.open) settingsDlg.close();
-    const defaults = { group: (filter.group && filter.group!=="All") ? filter.group : undefined,
-                       sub: filter.sub || undefined };
-    openEditor(null, defaults);
-  };
-
-  /* Shortcut */
-  document.addEventListener("keydown",(e)=>{
-    const metaN = (e.key.toLowerCase()==="n") && (e.metaKey || e.ctrlKey);
-    const inInput = ["INPUT","TEXTAREA"].includes(document.activeElement.tagName);
-    if(metaN && !inInput){ e.preventDefault(); newBtn.click(); }
-  });
-
-  searchEl.oninput=()=>renderList();
-  searchEl.onkeydown=e=>{
-    if(e.key==="Enter"){
-      const q=searchEl.value.trim();
-      if(q.startsWith(".")){
-        const alias=q.slice(1).toLowerCase();
-        const m=data.find(x=>{
-          const inFilter=(filter.group==="All"||x.group===filter.group)&&(!filter.sub||x.sub===filter.sub);
-          return inFilter && (x.alias||"").toLowerCase()===alias;
-        });
-        if(m){
-          navigator.clipboard.writeText(m.body||"");
-          toast("Copied");
-          const card=document.getElementById("card-"+m.id);
-          card?.scrollIntoView({behavior:"smooth",block:"center"});
-          card?.classList.add("hl"); setTimeout(()=>card?.classList.remove("hl"),1200);
-          hits=[m.id]; hitIdx=0; updateCounter();
-        } else { toast("No alias match in this view"); }
-      } else { e.shiftKey?gotoPrev():gotoNext(); }
-    } else if(e.key==="Escape"){ searchEl.value=""; renderList(); }
-  };
-
-  /* Settings */
-  settingsBtn.onclick=()=>{ renderSettings(); settingsDlg.showModal(); };
-  $("#closeSettings").onclick=()=>{ settingsDlg.close(); refresh(); };
-
-  $("#addCatBtn").onclick=()=>{
-    const cats=getCategories();
-    let base="New Category", name=base, i=1;
-    while(cats[name]) name=`${base} ${i++}`;
-    const info={ color:"#0FA6A6", prefix:"new" };
-    cats[name]=info;
-    setCategories(cats);
-    categories=cats;
-
-    // expand & focus new cat
-    expanded.add(name);
-    localStorage.setItem(EXPKEY, JSON.stringify([...expanded]));
-    filter={group:name, sub:null};
-    settingsDlg.close();              // close modal so "New" isn't blocked
-    refresh();                        // make it appear in the sidebar immediately
-    openEditor(null, { group:name }); // jump straight into creating the first macro
-  };
-
-  function renderSettings(){
-    categories = getCategories();
-    const container=$("#catRows");
-    container.innerHTML="";
-    Object.entries(categories).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([name,info])=>{
-      addCatRow({name, prefix:info.prefix, color:info.color});
-    });
-  }
-
-  function addCatRow({name,prefix,color}, focus=false){
-    const row=document.createElement("div");
-    row.className="settings-grid";
-    row.innerHTML=`
-      <input class="input catName" value="${name}" aria-label="Category name">
-      <input class="input catPre" value="${prefix}" aria-label="Prefix">
-      <input class="input catCol" type="color" value="${toHex(color)}" aria-label="Color">
-      <div class="row" style="justify-content:flex-end">
-        <button class="btn danger delBtn">Delete</button>
-      </div>
-    `;
-    $("#catRows").appendChild(row);
-
-    const nameEl=row.querySelector(".catName");
-    const preEl=row.querySelector(".catPre");
-    const colEl=row.querySelector(".catCol");
-    const delBtn=row.querySelector(".delBtn");
-
-    if(focus) nameEl.select();
-
-    const commit=()=>{
-      const oldName=name;
-      const newName=nameEl.value.trim()||oldName;
-      const newPrefix=(preEl.value||"").trim().toLowerCase().replace(/\s+/g,'')||"other";
-      const newColor=colEl.value||"#9ab7e6";
-      const cats=getCategories();
-
-      if(newName!==oldName){
-        cats[newName]={ color:newColor, prefix:newPrefix };
-        if(cats[oldName]) delete cats[oldName];
-        data = getAll().map(m=> m.group===oldName ? {...m, group:newName} : m);
-        name=newName;
-      } else {
-        cats[newName]={ color:newColor, prefix:newPrefix };
-      }
-      setCategories(cats);
-      categories=cats;
-      refresh();
-    };
-
-    ["input","change","blur"].forEach(ev=>{
-      nameEl.addEventListener(ev, commit);
-      preEl.addEventListener(ev, commit);
-      colEl.addEventListener(ev, commit);
-    });
-
-    delBtn.onclick=()=>{
-      if(!confirm(`Delete category "${name}"? Macros will move to "Other".`)) return;
-      const cats=getCategories();
-      if(name in cats) delete cats[name];
-      setCategories(cats);
-      categories=cats;
-      data=getAll().map(m=> m.group===name ? {...m, group:"Other"} : m);
-      row.remove();
-      refresh();
-    };
-  }
-
-  function toHex(c){ const ctx=document.createElement("canvas").getContext("2d"); ctx.fillStyle=c; const v=ctx.fillStyle; return v.startsWith("#")?v:"#9ab7e6"; }
-
-  /* Boot */
-  function load(){ seedIfEmpty(); data = migrate(getAll()); categories = getCategories(); refresh(); }
-
-  /* Login Enter key */
-  document.addEventListener("DOMContentLoaded", () => {
-    const user = document.querySelector('#u');
-    const pass = document.querySelector('#p');
-    const btn  = document.querySelector('#loginBtn');
-    [user, pass].forEach(el => { el?.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); btn?.click(); } }); });
-    user?.focus();
-  });
-})();
-</script>
-</body>
-</html>
+      <lab
