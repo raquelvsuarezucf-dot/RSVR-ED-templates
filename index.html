@@ -1115,6 +1115,22 @@ Return precautions discussed, including but not limited to: worsening or persist
   }
 
 })();
+// Enable Enter key to submit login
+document.addEventListener("DOMContentLoaded", () => {
+  const user = document.querySelector('input[type="text"]');
+  const pass = document.querySelector('input[type="password"]');
+  const btn = document.querySelector('button, input[type="submit"], [onclick*="signin"], [onclick*="login"]');
+
+  [user, pass].forEach(el => {
+    if (!el) return;
+    el.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        btn?.click();
+      }
+    });
+  });
+});
 
 </script>
 
