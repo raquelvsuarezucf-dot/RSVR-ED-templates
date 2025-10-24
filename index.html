@@ -12,7 +12,6 @@
     --radius:16px; --shadow:0 8px 28px rgba(15,38,64,.08);
   }
   *{box-sizing:border-box}
-  /* font 17 -> 16 */
   body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
   .hidden{display:none!important}
   .wrap{max-width:1200px;margin:0 auto;padding:16px}
@@ -27,7 +26,6 @@
   .layout{display:grid;grid-template-columns:280px 1fr;gap:16px}
 
   /* --- Search field emphasis --- */
-  /* 18px -> 17px; 48 -> 46 */
   #search{
     flex:1; min-width:260px;
     font-size:17px;
@@ -65,7 +63,6 @@
   /* Cards */
   .list{display:grid;gap:16px}
   .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-  /* Card header uses the category color; soft pastel gradient */
   .card[data-color] .card-head{
     background: linear-gradient(
       135deg,
@@ -75,17 +72,13 @@
     height: 36px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    display: block; /* decorative bar only */
-    padding: 0;
+    display: block;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.5),
                 0 2px 4px rgba(0,0,0,.05);
   }
   .card-body{padding:16px}
-  /* 1.05rem -> 1rem */
   .title{font-weight:800;margin:0 0 6px;font-size:1rem}
-  /* 14 -> 13.5 */
   .small{font-size:13.5px;color:#5b6b84}
-  /* 16 -> 15 */
   pre{white-space:pre-wrap;font-size:15px;color:#1d3657;background:#fafcff;border:1px dashed #e1ecfb;border-radius:12px;padding:12px;max-height:240px;overflow:auto;margin:8px 0 0}
   mark{background:#fff3a1;padding:0 .12em;border-radius:4px}
   .hl{outline:3px solid #8AC0FF;transition:outline-color .6s ease}
@@ -115,14 +108,11 @@
     .layout{ grid-template-columns: 1fr; gap: 12px; }
     .sidebar{ border-radius: 12px; padding: 10px; }
     .toolbar{ gap: 10px; }
-    /* 16 -> 15.5; 44 -> 42 */
     #search{ flex: 1; min-width: 0; width: 100%; height: 42px; font-size: 15.5px; }
     #prevBtn,#nextBtn,#newBtn,#settingsBtn{ height: 40px; padding: 8px 12px; }
     .card{ border-radius: 12px; }
     .card-body{ padding: 14px; }
-    /* 1.02rem -> 0.98rem */
     .title{ font-size: 0.98rem; line-height: 1.25; }
-    /* 15 -> 14.5 */
     pre{ font-size: 14.5px; max-height: 40vh; }
     #hitCount{ min-width: auto; }
   }
@@ -342,12 +332,19 @@ Return precautions discussed, including but not limited to: worsening or persist
   let filter = {group:"All", sub:null};
   let expanded = new Set(JSON.parse(localStorage.getItem(EXPKEY)||'[]'));
 
-  /* ---------- Sidebar ---------- */
+  /* ---------- Sidebar (now shows ALL categories, even with 0 items) ---------- */
   function buildTree(){
+    const cats = getCategories();
     const tree = {};
+    // start with every category at count 0
+    for (const g of Object.keys(cats)) {
+      tree[g] = { count: 0, subs: {} };
+    }
+    // add counts and subs from macros
     for(const m of data){
-      const g=m.group||"Other", s=m.sub||"";
-      tree[g] ??= {count:0, subs:{}};
+      const g = m.group || "Other";
+      const s = m.sub || "";
+      if(!tree[g]) tree[g] = { count: 0, subs: {} }; // safety
       tree[g].count++;
       if(s){ tree[g].subs[s] ??= 0; tree[g].subs[s]++; }
     }
@@ -355,30 +352,45 @@ Return precautions discussed, including but not limited to: worsening or persist
   }
 
   function renderSidebar(){
+    const catsMap = getCategories();
     const tree = buildTree();
-    const order = Object.keys(tree).sort((a,b)=>a.localeCompare(b));
+    const order = Object.keys(catsMap).sort((a,b)=>a.localeCompare(b));
     const allCount = data.length;
+
     let html = `<div class="cat ${filter.group==='All'?'active':''}" data-g="All"><span class="groupHead"><span class="caret">▾</span> All</span><span class="badge">${allCount}</span></div>`;
+
     for(const g of order){
       ensureCategory(g);
       const isOpen = expanded.has(g);
       const caret = isOpen ? "▾" : "▸";
       const col = colorForGroup(g);
+      const count = tree[g]?.count || 0;
+
       html += `<div class="cat ${filter.group===g && !filter.sub?'active':''}" data-g="${g}" data-color style="--cat-color:${col}">
         <span class="groupHead"><span class="caret">${caret}</span> ${g}</span>
-        <span class="badge">${tree[g].count}</span>
+        <span class="badge">${count}</span>
       </div>`;
-      const subs = Object.keys(tree[g].subs).sort((a,b)=>a.localeCompare(b));
+
+      const subs = Object.keys(tree[g]?.subs||{}).sort((a,b)=>a.localeCompare(b));
       const cls = `subs ${isOpen?'open':'closed'}`;
       html += `<div class="${cls}" data-parent="${g}">`;
-      for(const s of subs){
-        const active = filter.group===g && filter.sub===s ? "active" : "";
-        html += `<div class="sub ${active}" data-g="${g}" data-s="${s}" data-color style="--cat-color:${col}">
-          <span>${s}</span><span class="badge">${tree[g].subs[s]}</span>
+
+      // show existing subs; if none yet, show an empty hint row
+      if (subs.length === 0) {
+        html += `<div class="sub" data-g="${g}" data-s="" data-color style="--cat-color:${col};opacity:.65;pointer-events:none">
+          <span>(no subgroups yet)</span><span class="badge">0</span>
         </div>`;
+      } else {
+        for(const s of subs){
+          const active = filter.group===g && filter.sub===s ? "active" : "";
+          html += `<div class="sub ${active}" data-g="${g}" data-s="${s}" data-color style="--cat-color:${col}">
+            <span>${s}</span><span class="badge">${tree[g].subs[s]}</span>
+          </div>`;
+        }
       }
       html += `</div>`;
     }
+
     $("#cats").innerHTML = html;
 
     $("#cats").querySelectorAll(".cat").forEach(el=>{
@@ -392,6 +404,8 @@ Return precautions discussed, including but not limited to: worsening or persist
       };
     });
     $("#cats").querySelectorAll(".sub").forEach(el=>{
+      const s = el.dataset.s;
+      if(s==="") return; // skip the hint row
       el.onclick = ()=>{ filter={group:el.dataset.g, sub:el.dataset.s}; renderList(); renderSidebar(); };
     });
   }
@@ -447,8 +461,8 @@ Return precautions discussed, including but not limited to: worsening or persist
   function openEditor(id, defaults){
     const blank = {
       id: null,
-      group: defaults?.group || (filter.group && filter.group !== "All" ? filter.group : "Pediatrics"),
-      sub: defaults?.sub || filter.sub || ( (defaults?.group || filter.group) === "Pediatrics" ? "URI" : "" ),
+      group: defaults?.group || (filter.group && filter.group !== "All" ? filter.group : Object.keys(categories)[0] || "Pediatrics"),
+      sub: defaults?.sub || filter.sub || "",
       title: "", alias: "", body: ""
     };
     current = data.find(x=>x.id===id) || blank;
@@ -545,6 +559,25 @@ Return precautions discussed, including but not limited to: worsening or persist
   prevBtn.onclick = gotoPrev;
   nextBtn.onclick = gotoNext;
 
+  /* NEW button respects current filter */
+  newBtn.onclick = () => {
+    const defaults = {
+      group: (filter.group && filter.group !== "All") ? filter.group : undefined,
+      sub: filter.sub || undefined
+    };
+    openEditor(null, defaults);
+  };
+
+  /* Cmd/Ctrl+N opens New */
+  document.addEventListener("keydown", (e)=>{
+    const metaN = (e.key.toLowerCase()==="n") && (e.metaKey || e.ctrlKey);
+    const inInput = ["INPUT","TEXTAREA"].includes(document.activeElement.tagName);
+    if(metaN && !inInput){
+      e.preventDefault();
+      newBtn.click();
+    }
+  });
+
   searchEl.oninput=()=>renderList();
   searchEl.onkeydown=e=>{
     if(e.key==="Enter"){
@@ -574,7 +607,20 @@ Return precautions discussed, including but not limited to: worsening or persist
   /* ---------- Settings ---------- */
   $("#settingsBtn").onclick=()=>{ renderSettings(); settingsDlg.showModal(); };
   $("#closeSettings").onclick=()=>settingsDlg.close();
-  $("#addCatBtn").onclick=()=>addCatRow({name:"New Category", prefix:"new", color:"#0FA6A6"}, true);
+
+  /* CREATE & SAVE immediately on Add Category */
+  $("#addCatBtn").onclick=()=>{
+    const cats=getCategories();
+    let base="New Category", name=base, i=1;
+    while(cats[name]){ name=`${base} ${i++}`; }
+    const newInfo={ color:"#0FA6A6", prefix:"new" };
+    cats[name]=newInfo;
+    setCategories(cats);
+    categories=cats;
+    renderSidebar();  // now visible even with 0 items
+    renderList();
+    addCatRow({name, prefix:newInfo.prefix, color:newInfo.color}, true);
+  };
 
   function renderSettings(){
     categories = getCategories();
@@ -610,7 +656,6 @@ Return precautions discussed, including but not limited to: worsening or persist
       const newName=nameEl.value.trim()||oldName;
       const newPrefix=(preEl.value||"").trim().toLowerCase().replace(/\s+/g,'')||"other";
       const newColor=colEl.value||"#9ab7e6";
-
       const cats=getCategories();
 
       if(newName!==oldName){
@@ -622,15 +667,18 @@ Return precautions discussed, including but not limited to: worsening or persist
       } else {
         cats[newName]={ color:newColor, prefix:newPrefix };
       }
+
       setCategories(cats);
       categories=cats;
       renderSidebar();
       renderList();
     };
 
-    nameEl.onchange=commit;
-    preEl.onchange=commit;
-    colEl.onchange=commit;
+    ["input","change","blur"].forEach(ev=>{
+      nameEl.addEventListener(ev, commit);
+      preEl.addEventListener(ev, commit);
+      colEl.addEventListener(ev, commit);
+    });
 
     delBtn.onclick=()=>{
       if(!confirm(`Delete category "${name}"? Macros will move to "Other".`)) return;
@@ -657,7 +705,7 @@ Return precautions discussed, including but not limited to: worsening or persist
     renderList();
   }
 
-  /* Allow Enter to submit login (and Tab to switch fields normally) */
+  /* Allow Enter to submit login */
   document.addEventListener("DOMContentLoaded", () => {
     const user = document.querySelector('#u');
     const pass = document.querySelector('#p');
