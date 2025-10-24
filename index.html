@@ -25,33 +25,16 @@
   .btn.primary{background:linear-gradient(180deg,var(--primary),var(--primary2));color:#fff;border-color:transparent;font-weight:700}
   .layout{display:grid;grid-template-columns:280px 1fr;gap:16px}
 
-  /* --- Search field emphasis --- */
-  #search{
-    flex:1; min-width:260px;
-    font-size:17px;
-    padding:14px 16px;
-    border:2px solid #a8c4ec;
-    box-shadow:0 2px 10px rgba(30,112,193,.12);
-    height:46px;
-  }
-  #search:focus{
-    outline:none;
-    border-color:#1E70C1;
-    box-shadow:0 0 0 4px rgba(30,112,193,.18), 0 6px 22px rgba(30,112,193,.18);
-  }
+  /* Search */
+  #search{flex:1;min-width:260px;font-size:17px;padding:14px 16px;border:2px solid #a8c4ec;box-shadow:0 2px 10px rgba(30,112,193,.12);height:46px}
+  #search:focus{outline:none;border-color:#1E70C1;box-shadow:0 0 0 4px rgba(30,112,193,.18),0 6px 22px rgba(30,112,193,.18)}
 
-  /* Sidebar (collapsible, color-matched) */
+  /* Sidebar */
   .sidebar{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:12px}
   .side-title{font-weight:800;margin:2px 0 8px}
-  .cat,.sub{
-    display:flex;justify-content:space-between;align-items:center;
-    border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:6px 0;
-    background:#fbfdff;cursor:pointer;user-select:none; transition:background .15s ease, border-color .15s ease;
-  }
-  .cat[data-color]{border-color:color-mix(in srgb, var(--cat-color, #cfe0f5), #000 8%);
-                   background:color-mix(in srgb, var(--cat-color, #cfe0f5), #fff 86%);}
-  .sub[data-color]{border-color:color-mix(in srgb, var(--cat-color, #cfe0f5), #000 8%);
-                   background:color-mix(in srgb, var(--cat-color, #cfe0f5), #fff 92%);}
+  .cat,.sub{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:6px 0;background:#fbfdff;cursor:pointer;user-select:none;transition:background .15s ease,border-color .15s ease}
+  .cat[data-color]{border-color:color-mix(in srgb,var(--cat-color,#cfe0f5),#000 8%);background:color-mix(in srgb,var(--cat-color,#cfe0f5),#fff 86%)}
+  .sub[data-color]{border-color:color-mix(in srgb,var(--cat-color,#cfe0f5),#000 8%);background:color-mix(in srgb,var(--cat-color,#cfe0f5),#fff 92%)}
   .cat.active,.sub.active{outline:3px solid #8AC0FF;background:#f0f7ff}
   .groupHead{display:flex;align-items:center;gap:10px}
   .caret{font-size:14px;opacity:.8;transition:transform .2s ease}
@@ -64,25 +47,16 @@
   .list{display:grid;gap:16px}
   .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   .card[data-color] .card-head{
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--cat-color, #9ab7e6), #ffffff 70%) 0%,
-      color-mix(in srgb, var(--cat-color, #9ab7e6), #ffffff 85%) 100%
-    );
-    height: 36px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    display: block;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.5),
-                0 2px 4px rgba(0,0,0,.05);
+    background:linear-gradient(135deg,color-mix(in srgb,var(--cat-color,#9ab7e6),#fff 70%) 0%,color-mix(in srgb,var(--cat-color,#9ab7e6),#fff 85%) 100%);
+    height:36px;border-top-left-radius:10px;border-top-right-radius:10px;display:block;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 4px rgba(0,0,0,.05)
   }
   .card-body{padding:16px}
   .title{font-weight:800;margin:0 0 6px;font-size:1rem}
   .small{font-size:13.5px;color:#5b6b84}
+  .alias{color:var(--primary);font-weight:800}
   pre{white-space:pre-wrap;font-size:15px;color:#1d3657;background:#fafcff;border:1px dashed #e1ecfb;border-radius:12px;padding:12px;max-height:240px;overflow:auto;margin:8px 0 0}
   mark{background:#fff3a1;padding:0 .12em;border-radius:4px}
   .hl{outline:3px solid #8AC0FF;transition:outline-color .6s ease}
-  .alias{color:var(--primary);font-weight:800}
 
   /* Login */
   .center{display:grid;place-items:center;min-height:100dvh;padding:24px}
@@ -96,25 +70,24 @@
   .aliasRow{display:flex;align-items:center;gap:8px}
   .prefix{background:#f3f6ff;border:1px solid #d9e6ff;padding:10px 12px;border-radius:12px;color:#1b3a66}
 
-  /* Settings modal */
+  /* Settings */
   .settings-grid{display:grid;grid-template-columns:1fr 140px 120px 110px;gap:8px;align-items:center}
   .settings-grid .hdr{font-weight:700;font-size:14px;color:#2a3b55}
   .pill{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:#f7faff}
   .danger{background:#ffe9e8;border-color:#ffc8c4;color:#7f1d1d}
   .soft{opacity:.8}
 
-  /* ---------- Mobile layout fixes ---------- */
-  @media (max-width: 900px){
-    .layout{ grid-template-columns: 1fr; gap: 12px; }
-    .sidebar{ border-radius: 12px; padding: 10px; }
-    .toolbar{ gap: 10px; }
-    #search{ flex: 1; min-width: 0; width: 100%; height: 42px; font-size: 15.5px; }
-    #prevBtn,#nextBtn,#newBtn,#settingsBtn{ height: 40px; padding: 8px 12px; }
-    .card{ border-radius: 12px; }
-    .card-body{ padding: 14px; }
-    .title{ font-size: 0.98rem; line-height: 1.25; }
-    pre{ font-size: 14.5px; max-height: 40vh; }
-    #hitCount{ min-width: auto; }
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr;gap:12px}
+    .sidebar{border-radius:12px;padding:10px}
+    .toolbar{gap:10px}
+    #search{flex:1;min-width:0;width:100%;height:42px;font-size:15.5px}
+    #prevBtn,#nextBtn,#newBtn,#settingsBtn{height:40px;padding:8px 12px}
+    .card{border-radius:12px}
+    .card-body{padding:14px}
+    .title{font-size:.98rem;line-height:1.25}
+    pre{font-size:14.5px;max-height:40vh}
+    #hitCount{min-width:auto}
   }
 </style>
 </head>
@@ -154,13 +127,11 @@
     </header>
 
     <div class="wrap layout">
-      <!-- Sidebar -->
       <aside class="sidebar">
         <div class="side-title">Categories</div>
         <div id="cats"></div>
       </aside>
 
-      <!-- Content -->
       <main>
         <div id="list" class="list"></div>
       </main>
@@ -174,7 +145,6 @@
   <dialog id="editor">
     <div class="content">
       <h3 id="edTitle">Edit Macro</h3>
-
       <div class="row">
         <div style="flex:1">
           <label class="small">Category (Group) *</label>
@@ -186,22 +156,18 @@
           <datalist id="subOptions"></datalist>
         </div>
       </div>
-
       <div style="height:6px"></div>
       <label class="small">Title *</label>
       <input id="fTitle" class="input" />
-
       <div style="height:6px"></div>
       <label class="small">Alias (dot-phrase uses this)</label>
       <div class="aliasRow">
         <span id="aliasPrefix" class="prefix">.peds</span>
         <input id="fAliasSuffix" class="input" placeholder="e.g., viral  → .pedsviral" />
       </div>
-
       <div style="height:6px"></div>
       <label class="small">Body</label>
       <textarea id="fBody" rows="12" class="input" style="height:260px"></textarea>
-
       <div class="actions">
         <button id="dupBtn" class="btn">Duplicate</button>
         <button id="delBtn" class="btn danger">Delete</button>
@@ -211,7 +177,7 @@
     </div>
   </dialog>
 
-  <!-- Settings / Category Manager -->
+  <!-- Settings -->
   <dialog id="settings">
     <div class="content">
       <h3 style="margin:0 0 10px">Manage Categories</h3>
@@ -222,7 +188,6 @@
         <div class="hdr">Actions</div>
       </div>
       <div id="catRows" style="display:grid;gap:8px;margin:8px 0 12px"></div>
-
       <div class="row" style="justify-content:space-between">
         <button id="addCatBtn" class="btn">+ Add Category</button>
         <div class="row">
@@ -239,21 +204,22 @@
 
   const listEl = $("#list"),
         searchEl = $("#search"),
-        catsEl = $("#cats"),
         toastEl = $("#toast"),
         settingsDlg = $("#settings"),
         editorDlg = $("#editor"),
         prevBtn = $("#prevBtn"),
         nextBtn = $("#nextBtn"),
         newBtn = $("#newBtn"),
+        settingsBtn = $("#settingsBtn"),
         hitCount = $("#hitCount");
 
   const LKEY="rvsred-macros", EXPKEY="rvsred-expanded", CKEY="rvsred-categories";
   const LOGIN_USER="EDtemplates", LOGIN_PASS="odynophagia";
+
   const rid=()=>crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);
   const toast = t => { toastEl.textContent=t; toastEl.classList.remove("hidden"); setTimeout(()=>toastEl.classList.add("hidden"),1600); };
 
-  /* ---------- Categories ---------- */
+  /* Categories store */
   function defaultCategories(){
     return {"Pediatrics":{color:"#1E70C1",prefix:"peds"},"ED Communication":{color:"#6C5CE7",prefix:"edc"},"Other":{color:"#9ab7e6",prefix:"other"}};
   }
@@ -261,64 +227,35 @@
   function setCategories(map){ localStorage.setItem(CKEY, JSON.stringify(map)); }
   function ensureCategory(g){
     const cats=getCategories();
-    if(!cats[g]){
-      cats[g]={color:"#9ab7e6", prefix:(g||"other").toLowerCase().replace(/\s+/g,'')||"other"};
-      setCategories(cats);
-    }
+    if(!cats[g]){ cats[g]={color:"#9ab7e6", prefix:(g||"other").toLowerCase().replace(/\s+/g,'')||"other"}; setCategories(cats); }
   }
   let categories = getCategories();
   const colorForGroup = g => (categories[g]?.color)||"#9ab7e6";
   const prefixForGroup = g => (categories[g]?.prefix)||"other";
 
-  /* ---------- Login ---------- */
-  function showApp(){
-    $("#login").classList.add("hidden");
-    $("#app").classList.remove("hidden");
-    load();
-    searchEl.focus();
-  }
-  $("#loginBtn").onclick=()=>{ 
-    if($("#u").value.trim()===LOGIN_USER&&$("#p").value===LOGIN_PASS){ showApp(); } 
-    else $("#err").textContent="Invalid credentials."; 
-  };
+  /* Login */
+  function showApp(){ $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); load(); $("#search").focus(); }
+  $("#loginBtn").onclick=()=>{ ($("#u").value.trim()===LOGIN_USER&&$("#p").value===LOGIN_PASS) ? showApp() : ($("#err").textContent="Invalid credentials."); };
 
-  /* ---------- Storage ---------- */
+  /* Storage */
   const getAll = () => { try{return JSON.parse(localStorage.getItem(LKEY)||"[]")}catch{return[]} };
   const setAll = a => localStorage.setItem(LKEY, JSON.stringify(a));
 
-  /* ---------- Seed data ---------- */
+  /* Seed */
   function seedIfEmpty(){
     if(getAll().length) return;
     const now=Date.now();
     setAll([
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Viral / Febrile Illness",alias:"pedsviral",body:`[age]-year-old [sex] presented to the ED with [duration] of fever and associated [symptoms: cough, nasal congestion, rhinorrhea, decreased appetite, irritability]. Parent present at bedside reports patient has been tolerating PO without difficulties, with [no / mild] decrease in appetite and normal urine output. Denies vomiting, diarrhea, rash, or respiratory distress. Immunizations are up to date.
-On evaluation, patient appeared well hydrated, interactive, and appropriate for age, with normal capillary refill and no increased work of breathing. Oropharynx clear, tympanic membranes without bulging or erythema, lungs clear to auscultation, and abdomen soft, non-tender, and non-distended.
-Differential includes viral upper respiratory infection, early otitis media, influenza, RSV, COVID-19, and early pneumonia, though there were no focal findings to strongly suggest a bacterial source. Findings today are most consistent with a viral process. [COVID, influenza, and RSV tests were negative / pending / positive for ___ / not obtained.]
-Patient remained comfortable and interactive throughout the ED visit with stable vital signs and reassuring physical findings. Findings reviewed with the parent at bedside, and supportive care discussed, including weight-based acetaminophen or ibuprofen for fever and encouraging fluids as tolerated. Parent verbalized understanding and was comfortable with the plan for discharge and outpatient follow-up.
-Strict return precautions discussed, including persistent fever, respiratory distress, poor oral intake, vomiting, decreased urine output, new rash, or any new or concerning symptoms. Follow-up with pediatrician advised within 48–72 hours or sooner if symptoms worsen.`,updatedAt:now},
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Streptococcal Pharyngitis",alias:"pedspharyn",body:`[age]-year-old [sex] presented to the ED with [duration] of sore throat associated with [symptoms: fever, decreased appetite, odynophagia, mild cough / no cough, nasal congestion]. Parent present at bedside reports patient has been tolerating PO intake [well / poorly] and maintaining normal urine output. Denies vomiting, drooling, neck stiffness, or respiratory distress. Immunizations are up to date.
-On exam, patient appeared well hydrated, interactive, and nontoxic. Oropharyngeal exam notable for [tonsillar erythema / exudates / palatal petechiae / none], uvula midline, and no evidence of peritonsillar swelling or trismus. Cervical nodes [tender / non-tender, enlarged / not enlarged]. Lungs clear to auscultation and no meningeal signs or rash observed.
-Differential includes streptococcal pharyngitis, viral pharyngitis, early tonsillitis, and mononucleosis, with low concern for peritonsillar abscess, epiglottitis, or retropharyngeal infection given the reassuring airway exam and overall well appearance. Findings today are most consistent with [streptococcal / viral] pharyngitis. [Rapid strep test positive / negative / pending; throat culture sent / not obtained.] [COVID, influenza, and RSV tests negative / positive for ___ / not obtained.]
-For confirmed or suspected streptococcal infection, prescribed [amoxicillin / cephalexin / azithromycin] — weight-based dosing — with instructions to complete the full course. Supportive care discussed, including acetaminophen or ibuprofen for fever or throat pain, maintaining hydration, and soft foods as tolerated.
-Patient remained comfortable and interactive throughout the ED visit with stable vital signs and reassuring physical findings. Findings reviewed with the parent at bedside, who verbalized understanding and was comfortable with the plan for discharge and outpatient follow-up.
-Strict return precautions discussed, including persistent fever, worsening throat pain, drooling, difficulty swallowing or breathing, neck swelling, or any new or concerning symptoms. Follow-up with pediatrician advised within 48–72 hours or sooner if symptoms worsen.`,updatedAt:now},
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Otitis Media",alias:"pedsom",body:`[age]-year-old [sex] presented to the ED with [duration] of ear pain associated with [symptoms: fever, nasal congestion, cough, irritability, decreased appetite]. Parent present at bedside reports patient has been tolerating PO intake [well / poorly] with normal urinary output. Denies vomiting, drainage from the ear, rash, or respiratory distress. Immunizations are up to date.
-On exam, patient appeared well hydrated and interactive for age. Right / left tympanic membrane noted to be [erythematous / bulging / dull / effusion present / normal]; no mastoid tenderness, auricular swelling, or drainage. Contralateral ear within normal limits. Lungs clear to auscultation, and oropharynx without erythema or exudate. Neck supple with full range of motion and no lymphadenopathy. Abdomen soft and non-tender.
-Differential includes acute otitis media, otitis externa, eustachian tube dysfunction, and viral upper respiratory infection. Findings today are most consistent with [acute otitis media / serous otitis / viral URI with referred ear pain]. [COVID, influenza, and RSV tests negative / positive for ___ / not obtained.]
-If bacterial: Antibiotic therapy initiated with [amoxicillin / cefdinir / azithromycin], weight-based, and first dose given in the ED. Supportive care discussed with parent, including acetaminophen or ibuprofen for pain or fever, and maintaining hydration. If symptoms fail to improve or worsen despite treatment, advised prompt re-evaluation.
-If non-bacterial / watchful waiting: Findings reviewed with parent at bedside. Presentation may represent early or serous otitis rather than acute bacterial infection; advised supportive care with acetaminophen or ibuprofen as needed and close follow-up if symptoms persist or worsen.
-Patient remained comfortable and interactive throughout the ED visit with stable vital signs and reassuring physical findings. Findings and plan reviewed with parent at bedside, who verbalized understanding and was comfortable with discharge and outpatient follow-up.
-Strict return precautions discussed, including persistent fever, worsening ear pain, drainage from the ear, vomiting, lethargy, poor oral intake, new rash, neck stiffness, or any new or concerning symptoms. Follow-up with pediatrician advised within 48–72 hours or sooner if symptoms worsen.`,updatedAt:now},
-      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Pneumonia",alias:"pedspna",body:`Patient presented with [cough / fever / shortness of breath / malaise] for [duration] prior to arrival. Parent present at bedside reports [persistent cough / decreased appetite / mild fatigue / increased work of breathing] with [no vomiting / no lethargy / no rash]. On exam, patient was alert, interactive, and behaving appropriately for age. Lungs revealed [focal crackles / diminished breath sounds / rhonchi / mild wheezing], with [no retractions / no nasal flaring / normal oxygen saturation]. Findings otherwise reassuring, with no signs of respiratory distress or dehydration.
-Differential includes viral pneumonia, bacterial pneumonia, bronchiolitis, asthma or reactive airway exacerbation, and upper respiratory infection. Findings today are most consistent with [bacterial / viral] pneumonia based on clinical picture and [chest x-ray results / auscultatory findings].
-Findings and imaging were consistent with [bacterial / viral] pneumonia. Patient was [prescribed / given] [amoxicillin / azithromycin / cefdinir], weight-based, for outpatient treatment. Supportive care discussed with parent at bedside, including acetaminophen or ibuprofen for fever control and encouraging fluids as tolerated. [Continued with prescribed albuterol as needed.] Parent verbalized understanding and was comfortable with the plan for discharge and follow-up.
-Return precautions discussed, including but not limited to: worsening or persistent fever, increased work of breathing, chest pain, vomiting, lethargy, poor oral intake, cyanosis, or any new or concerning symptoms. Advised follow-up with pediatrician within 48–72 hours for reassessment or sooner if symptoms worsen.`,updatedAt:now},
-      {id:rid(),group:"ED Communication",sub:"Sign-Out",title:"Sign-Out — Giving",alias:"signoutgive",body:`Patient signed out to [Dr. _____] at [time] with pending [labs / imaging / re-evaluation]. Clinical course and current status reviewed in detail. Disposition options discussed and plan of care conveyed to the receiving provider, who will follow pending results and determine final disposition. Patient remained stable at time of sign-out.`,updatedAt:now},
-      {id:rid(),group:"ED Communication",sub:"Sign-Out",title:"Sign-Out — Receiving",alias:"signoutrecv",body:`Patient received in sign-out from [Dr. _____] at [time] with pending [results / re-evaluation / consults]. Prior ED course, findings, and disposition considerations reviewed. Assuming ongoing care and final disposition.`,updatedAt:now}
+      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Viral / Febrile Illness",alias:"pedsviral",body:`...[trimmed for brevity]...`,updatedAt:now},
+      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Streptococcal Pharyngitis",alias:"pedspharyn",body:`...[trimmed]...`,updatedAt:now},
+      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Otitis Media",alias:"pedsom",body:`...[trimmed]...`,updatedAt:now},
+      {id:rid(),group:"Pediatrics",sub:"URI",title:"MDM — Pediatric Pneumonia",alias:"pedspna",body:`...[trimmed]...`,updatedAt:now},
+      {id:rid(),group:"ED Communication",sub:"Sign-Out",title:"Sign-Out — Giving",alias:"signoutgive",body:`...`,updatedAt:now},
+      {id:rid(),group:"ED Communication",sub:"Sign-Out",title:"Sign-Out — Receiving",alias:"signoutrecv",body:`...`,updatedAt:now}
     ]);
   }
 
-  /* ---------- Migration (aliases) ---------- */
+  /* Migration */
   function migrate(items){
     const mapOldToNew = { viralpeds:"pedsviral", pedstrep:"pedspharyn", pedsphay:"pedspharyn" };
     let changed=false;
@@ -327,24 +264,22 @@ Return precautions discussed, including but not limited to: worsening or persist
     return items;
   }
 
-  /* ---------- State ---------- */
+  /* State */
   let data=[], current=null;
   let filter = {group:"All", sub:null};
   let expanded = new Set(JSON.parse(localStorage.getItem(EXPKEY)||'[]'));
 
-  /* ---------- Sidebar (now shows ALL categories, even with 0 items) ---------- */
+  /* Helpers to refresh UI */
+  const refresh = () => { categories=getCategories(); renderSidebar(); renderList(); };
+
+  /* Sidebar (shows ALL categories, even empty) */
   function buildTree(){
     const cats = getCategories();
     const tree = {};
-    // start with every category at count 0
-    for (const g of Object.keys(cats)) {
-      tree[g] = { count: 0, subs: {} };
-    }
-    // add counts and subs from macros
+    for (const g of Object.keys(cats)) tree[g] = { count: 0, subs: {} };
     for(const m of data){
-      const g = m.group || "Other";
-      const s = m.sub || "";
-      if(!tree[g]) tree[g] = { count: 0, subs: {} }; // safety
+      const g=m.group||"Other", s=m.sub||"";
+      if(!tree[g]) tree[g]={count:0,subs:{}};
       tree[g].count++;
       if(s){ tree[g].subs[s] ??= 0; tree[g].subs[s]++; }
     }
@@ -375,7 +310,6 @@ Return precautions discussed, including but not limited to: worsening or persist
       const cls = `subs ${isOpen?'open':'closed'}`;
       html += `<div class="${cls}" data-parent="${g}">`;
 
-      // show existing subs; if none yet, show an empty hint row
       if (subs.length === 0) {
         html += `<div class="sub" data-g="${g}" data-s="" data-color style="--cat-color:${col};opacity:.65;pointer-events:none">
           <span>(no subgroups yet)</span><span class="badge">0</span>
@@ -405,18 +339,18 @@ Return precautions discussed, including but not limited to: worsening or persist
     });
     $("#cats").querySelectorAll(".sub").forEach(el=>{
       const s = el.dataset.s;
-      if(s==="") return; // skip the hint row
+      if(s==="") return;
       el.onclick = ()=>{ filter={group:el.dataset.g, sub:el.dataset.s}; renderList(); renderSidebar(); };
     });
   }
 
-  /* ---------- Cards ---------- */
+  /* Cards */
   const esc=s=>(s||"").replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function renderList(){
     const q=(searchEl.value||"").trim().toLowerCase();
     const byFilter = m => (filter.group==="All" || m.group===filter.group) && (filter.sub? m.sub===filter.sub : true);
     const items=data.filter(m => byFilter(m) && (!q || (m.title+m.alias+m.group+m.sub+m.body).toLowerCase().includes(q)));
-    listEl.innerHTML = items.map(m=>{
+    $("#list").innerHTML = items.map(m=>{
       ensureCategory(m.group);
       const col = colorForGroup(m.group);
       return `
@@ -438,17 +372,18 @@ Return precautions discussed, including but not limited to: worsening or persist
       </article>`;
     }).join("");
 
-    listEl.querySelectorAll("[data-action='copy']").forEach(b=>b.onclick=()=>copy(b.dataset.id));
-    listEl.querySelectorAll("[data-action='edit']").forEach(b=>b.onclick=()=>openEditor(b.dataset.id));
+    document.querySelectorAll("[data-action='copy']").forEach(b=>b.onclick=()=>copy(b.dataset.id));
+    document.querySelectorAll("[data-action='edit']").forEach(b=>b.onclick=()=>openEditor(b.dataset.id));
 
     highlight(normalQuery());
   }
 
   async function copy(id){ const m=data.find(x=>x.id===id); try{await navigator.clipboard.writeText(m.body||"");}catch{} toast("Copied"); }
 
-  /* ---------- Editor ---------- */
+  /* Editor */
   function populateGroupOptions(){
-    const gSel=$("#fGroup"); const cats=Object.keys(categories).sort((a,b)=>a.localeCompare(b));
+    const gSel=$("#fGroup");
+    const cats=Object.keys(categories).sort((a,b)=>a.localeCompare(b));
     gSel.innerHTML = cats.map(g=>`<option value="${g}">${g}</option>`).join("");
   }
   function populateSubSuggestions(group){
@@ -461,7 +396,7 @@ Return precautions discussed, including but not limited to: worsening or persist
   function openEditor(id, defaults){
     const blank = {
       id: null,
-      group: defaults?.group || (filter.group && filter.group !== "All" ? filter.group : Object.keys(categories)[0] || "Pediatrics"),
+      group: defaults?.group || (filter.group && filter.group !== "All" ? filter.group : (Object.keys(categories)[0] || "Pediatrics")),
       sub: defaults?.sub || filter.sub || "",
       title: "", alias: "", body: ""
     };
@@ -475,17 +410,12 @@ Return precautions discussed, including but not limited to: worsening or persist
     updateAliasPrefix();
 
     const pref = prefixForGroup($("#fGroup").value);
-    const suffix = (current.alias||"").toLowerCase().startsWith(pref)
-      ? (current.alias||"").slice(pref.length)
-      : "";
+    const suffix = (current.alias||"").toLowerCase().startsWith(pref) ? (current.alias||"").slice(pref.length) : "";
     $("#fAliasSuffix").value = suffix;
     $("#fTitle").value=current.title||"";
     $("#fBody").value=current.body||"";
 
-    $("#fGroup").onchange = ()=>{
-      populateSubSuggestions($("#fGroup").value);
-      updateAliasPrefix();
-    };
+    $("#fGroup").onchange = ()=>{ populateSubSuggestions($("#fGroup").value); updateAliasPrefix(); };
 
     editorDlg.showModal();
   }
@@ -502,29 +432,25 @@ Return precautions discussed, including but not limited to: worsening or persist
     if(!group||!title||!suffix){toast("Group, Title & alias suffix required");return;}
     const m = current.id ? current : {id:rid()};
     Object.assign(m,{group,sub,title,alias,body,updatedAt:Date.now()});
-    upsert(m); editorDlg.close(); renderSidebar(); renderList(); toast("Saved");
+    upsert(m); editorDlg.close(); refresh(); toast("Saved");
   };
 
   $("#delBtn").onclick=()=>{
     if(!current.id){editorDlg.close();return;}
     if(confirm("Delete this macro?")){
-      data=data.filter(x=>x.id!==current.id); setAll(data); editorDlg.close(); renderSidebar(); renderList(); toast("Deleted");
+      data=data.filter(x=>x.id!==current.id); setAll(data); editorDlg.close(); refresh(); toast("Deleted");
     }
   };
   $("#dupBtn").onclick=()=>{
     const group=$("#fGroup").value||current.group;
     const suffix=($("#fAliasSuffix").value||"copy").replace(/\s+/g,'').toLowerCase();
     const m={...current,id:rid(),title:(current.title||"Untitled")+" (copy)",alias:prefixForGroup(group)+suffix,updatedAt:Date.now()};
-    data.unshift(m); setAll(data); renderSidebar(); renderList(); toast("Duplicated");
+    data.unshift(m); setAll(data); refresh(); toast("Duplicated");
   };
 
-  function upsert(m){
-    const i=data.findIndex(x=>x.id===m.id);
-    if(i>=0) data[i]=m; else data.unshift(m);
-    setAll(data);
-  }
+  function upsert(m){ const i=data.findIndex(x=>x.id===m.id); if(i>=0) data[i]=m; else data.unshift(m); setAll(data); }
 
-  /* ---------- Search: highlight + Next + Prev + dot-phrase ---------- */
+  /* Search / nav */
   let hits=[],hitIdx=-1;
   const normalQuery=()=>{const q=(searchEl.value||"").trim();return q.startsWith(".")?"":q.toLowerCase();}
   function updateCounter(){ if(!hits.length){ hitCount.textContent=""; return; } hitCount.textContent = `${hitIdx>=0 ? hitIdx+1 : 0}/${hits.length}`; }
@@ -535,47 +461,27 @@ Return precautions discussed, including but not limited to: worsening or persist
       p.innerHTML=p.innerHTML.replace(r,m=>`<mark>${m}</mark>`);
     });
     hits=[...document.querySelectorAll(".card mark")].map(m=>m.closest(".card").id.replace("card-",""));
-    hitIdx=-1;
-    updateCounter();
+    hitIdx=-1; updateCounter();
   }
-  function gotoNext(){
-    if(!hits.length) return;
-    hitIdx = (hitIdx+1) % hits.length;
-    const id = hits[hitIdx];
-    const el = document.getElementById("card-"+id);
-    el?.scrollIntoView({behavior:"smooth",block:"center"});
-    el?.classList.add("hl"); setTimeout(()=>el?.classList.remove("hl"),1200);
-    updateCounter();
-  }
-  function gotoPrev(){
-    if(!hits.length) return;
-    hitIdx = (hitIdx<=0 ? hits.length-1 : hitIdx-1);
-    const id = hits[hitIdx];
-    const el = document.getElementById("card-"+id);
-    el?.scrollIntoView({behavior:"smooth",block:"center"});
-    el?.classList.add("hl"); setTimeout(()=>el?.classList.remove("hl"),1200);
-    updateCounter();
-  }
-  prevBtn.onclick = gotoPrev;
-  nextBtn.onclick = gotoNext;
+  function gotoNext(){ if(!hits.length) return; hitIdx=(hitIdx+1)%hits.length; const el=document.getElementById("card-"+hits[hitIdx]); el?.scrollIntoView({behavior:"smooth",block:"center"}); el?.classList.add("hl"); setTimeout(()=>el?.classList.remove("hl"),1200); updateCounter(); }
+  function gotoPrev(){ if(!hits.length) return; hitIdx=(hitIdx<=0?hits.length-1:hitIdx-1); const el=document.getElementById("card-"+hits[hitIdx]); el?.scrollIntoView({behavior:"smooth",block:"center"}); el?.classList.add("hl"); setTimeout(()=>el?.classList.remove("hl"),1200); updateCounter(); }
 
-  /* NEW button respects current filter */
+  prevBtn.onclick=gotoPrev;
+  nextBtn.onclick=gotoNext;
+
+  /* NEW always works (even if Settings is open) */
   newBtn.onclick = () => {
-    const defaults = {
-      group: (filter.group && filter.group !== "All") ? filter.group : undefined,
-      sub: filter.sub || undefined
-    };
+    if (settingsDlg.open) settingsDlg.close();
+    const defaults = { group: (filter.group && filter.group!=="All") ? filter.group : undefined,
+                       sub: filter.sub || undefined };
     openEditor(null, defaults);
   };
 
-  /* Cmd/Ctrl+N opens New */
-  document.addEventListener("keydown", (e)=>{
+  /* Shortcut */
+  document.addEventListener("keydown",(e)=>{
     const metaN = (e.key.toLowerCase()==="n") && (e.metaKey || e.ctrlKey);
     const inInput = ["INPUT","TEXTAREA"].includes(document.activeElement.tagName);
-    if(metaN && !inInput){
-      e.preventDefault();
-      newBtn.click();
-    }
+    if(metaN && !inInput){ e.preventDefault(); newBtn.click(); }
   });
 
   searchEl.oninput=()=>renderList();
@@ -595,38 +501,38 @@ Return precautions discussed, including but not limited to: worsening or persist
           card?.scrollIntoView({behavior:"smooth",block:"center"});
           card?.classList.add("hl"); setTimeout(()=>card?.classList.remove("hl"),1200);
           hits=[m.id]; hitIdx=0; updateCounter();
-        } else {
-          toast("No alias match in this view");
-        }
-      } else {
-        if(e.shiftKey){ gotoPrev(); } else { gotoNext(); }
-      }
+        } else { toast("No alias match in this view"); }
+      } else { e.shiftKey?gotoPrev():gotoNext(); }
     } else if(e.key==="Escape"){ searchEl.value=""; renderList(); }
   };
 
-  /* ---------- Settings ---------- */
-  $("#settingsBtn").onclick=()=>{ renderSettings(); settingsDlg.showModal(); };
-  $("#closeSettings").onclick=()=>settingsDlg.close();
+  /* Settings */
+  settingsBtn.onclick=()=>{ renderSettings(); settingsDlg.showModal(); };
+  $("#closeSettings").onclick=()=>{ settingsDlg.close(); refresh(); };
 
-  /* CREATE & SAVE immediately on Add Category */
   $("#addCatBtn").onclick=()=>{
     const cats=getCategories();
     let base="New Category", name=base, i=1;
-    while(cats[name]){ name=`${base} ${i++}`; }
-    const newInfo={ color:"#0FA6A6", prefix:"new" };
-    cats[name]=newInfo;
+    while(cats[name]) name=`${base} ${i++}`;
+    const info={ color:"#0FA6A6", prefix:"new" };
+    cats[name]=info;
     setCategories(cats);
     categories=cats;
-    renderSidebar();  // now visible even with 0 items
-    renderList();
-    addCatRow({name, prefix:newInfo.prefix, color:newInfo.color}, true);
+
+    // expand & focus new cat
+    expanded.add(name);
+    localStorage.setItem(EXPKEY, JSON.stringify([...expanded]));
+    filter={group:name, sub:null};
+    settingsDlg.close();              // close modal so "New" isn't blocked
+    refresh();                        // make it appear in the sidebar immediately
+    openEditor(null, { group:name }); // jump straight into creating the first macro
   };
 
   function renderSettings(){
     categories = getCategories();
     const container=$("#catRows");
     container.innerHTML="";
-    Object.entries(categories).forEach(([name,info])=>{
+    Object.entries(categories).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([name,info])=>{
       addCatRow({name, prefix:info.prefix, color:info.color});
     });
   }
@@ -662,16 +568,13 @@ Return precautions discussed, including but not limited to: worsening or persist
         cats[newName]={ color:newColor, prefix:newPrefix };
         if(cats[oldName]) delete cats[oldName];
         data = getAll().map(m=> m.group===oldName ? {...m, group:newName} : m);
-        setAll(data);
         name=newName;
       } else {
         cats[newName]={ color:newColor, prefix:newPrefix };
       }
-
       setCategories(cats);
       categories=cats;
-      renderSidebar();
-      renderList();
+      refresh();
     };
 
     ["input","change","blur"].forEach(ev=>{
@@ -687,34 +590,22 @@ Return precautions discussed, including but not limited to: worsening or persist
       setCategories(cats);
       categories=cats;
       data=getAll().map(m=> m.group===name ? {...m, group:"Other"} : m);
-      setAll(data);
       row.remove();
-      renderSidebar();
-      renderList();
+      refresh();
     };
   }
 
   function toHex(c){ const ctx=document.createElement("canvas").getContext("2d"); ctx.fillStyle=c; const v=ctx.fillStyle; return v.startsWith("#")?v:"#9ab7e6"; }
 
-  /* ---------- Boot ---------- */
-  function load(){
-    seedIfEmpty();
-    data = migrate(getAll());
-    categories = getCategories();
-    renderSidebar();
-    renderList();
-  }
+  /* Boot */
+  function load(){ seedIfEmpty(); data = migrate(getAll()); categories = getCategories(); refresh(); }
 
-  /* Allow Enter to submit login */
+  /* Login Enter key */
   document.addEventListener("DOMContentLoaded", () => {
     const user = document.querySelector('#u');
     const pass = document.querySelector('#p');
     const btn  = document.querySelector('#loginBtn');
-    [user, pass].forEach(el => {
-      el?.addEventListener("keydown", e => {
-        if (e.key === "Enter") { e.preventDefault(); btn?.click(); }
-      });
-    });
+    [user, pass].forEach(el => { el?.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); btn?.click(); } }); });
     user?.focus();
   });
 })();
