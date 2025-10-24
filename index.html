@@ -121,13 +121,21 @@
   .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 
  .card-head {
-  background: linear-gradient(to right, #6c63ff, #8360c3);
-  height: 32px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    #5f3dc4 0%,   /* deep violet start */
+    #6a4ff7 40%,  /* bright mid-purple */
+    #8a2be2 70%,  /* electric lavender */
+    #b07aff 100%  /* soft highlight finish */
+  );
+  height: 36px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),
+              0 2px 6px rgba(0,0,0,0.15);
 }
 
 
