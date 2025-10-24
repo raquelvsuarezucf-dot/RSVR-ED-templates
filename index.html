@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="rvsred">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>RVSRED Templates — Local</title>
+  <meta name="description" content="Emergency Medicine documentation templates — No PHI stored." />
+  <meta name="color-scheme" content="light" />
+  <style>
+    :root{
+      --bg:#f6f8fc; --panel:#fff; --ink:#0f2640; --muted:#5b6b84;
+      --primary:#1E70C1; --primary-2:#3A8BE0;
+      --ok:#0e9f6e; --warn:#e3a008; --err:#d64545;
+      --ring:0 0 0 3px rgba(58,139,224,.25);
+      --radius:16px; --shadow:0 10px 28px rgba(15,38,64,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial;}
+    a{color:var(--primary)}
+    .app{max-width:1100px;margin:0 auto;padding:18px}
+    .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .brand{font-weight:700;letter-spacing:.2px}
+    .tag{padding:.2rem .55rem;background:#e9f2ff;color:#0b4aa6;border-radius:999px;font-size:12px}
+    .grow{flex:1 1 auto}
+    input,select,textarea,button{font:inherit}
+    .input{width:100%;padding:.6rem .75rem;border:1px solid #d5e3f8;border-radius:12px;background:#fff;outline:none}
+    .input:focus{box-shadow:var(--ring);border-color:#b8d2f7}
+    .btn{padding:.55rem .8rem;border:1px solid #cfe0f5;background:#fff;border-radius:12px;cursor:pointer}
+    .btn.primary{background:linear-gradient(0deg,var(--primary),var(--primary-2));color:#fff;border:none}
+    .btn.ok{background:linear-gradient(0deg,#0d8a60,#15b07d);color:#fff;border:none}
+    .btn.warn{background:#fff3cd;border-color:#ffe7a3}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .panel{background:var(--panel);border:1px solid #e2ecfb;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .row{display:flex;gap:10px;align-items:center}
+    .stack{display:grid;gap:10px}
+    .cards{display:grid;grid-template-columns:repeat( auto-fill, minmax(260px,1fr) );gap:12px;margin-top:14px}
+    .card{display:flex;flex-direction:column;min-height:140px;padding:12px;border:1px solid #dfe9fb;border-radius:14px;background:#fff;box-shadow:0 4px 16px rgba(15,38,64,.06)}
+    .card.dragging{opacity:.5}
+    .card h3{margin:.1rem 0 .2rem 0;font-size:15px}
+    .card small{color:var(--muted)}
+    .card textarea{margin-top:8px;min-height:84px;resize:vertical;width:100%;border:1px solid #e1eaf7;border-radius:10px;padding:.55rem}
+    .card .actions{display:flex;gap:8px;margin-top:8px}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px dashed #d9e6fb;padding:.2rem .5rem;border-radius:999px;font-size:12px;color:var(--muted)}
+    .muted{color:var(--muted)}
+    .spacer{flex:1}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#0f2640;color:#fff;padding:.6rem .9rem;border-radius:12px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s}
+    .toast.show{opacity:1}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal{max-width:520px;width:100%}
+    .modal-backdrop.show{display:flex}
+    .hint{font-size:12px;color:var(--muted)}
+    .kbd{border:1px solid #ccd9ee;border-bottom-width:2px;background:#fff;border-radius:6px;padding:0 .3rem;font-weight:600}
+    .hr{height:1px;background:#e6eefc;margin:.5rem 0}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Top bar -->
+    <div class="bar">
+      <div class="brand">RVSRED <span class="tag">Templates</span></div>
+      <div class="spacer"></div>
+      <div class="grow"><input id="q" class="input" placeholder="Search (tip: type .term to copy first match)…  ⌘/Ctrl+K focuses" autocomplete="off"></div>
+      <button class="btn" id="btnAdd">+ New</button>
+      <button class="btn" id="btnImport">Import</button>
+      <button class="btn" id="btnExport">Export</button>
+      <button class="btn" id="btnSignOut">Sign out</button>
+    </div>
+
+    <!-- Filters / add row -->
+    <div class="panel" style="margin-top:12px;padding:12px">
+      <div class="row" style="flex-wrap:wrap">
+        <select id="filterCat" class="input" style="max-width:220px">
+          <option value="">All categories</option>
+        </select>
+        <div class="pill">Editing keeps position</div>
+        <div class="pill">Drag cards to reorder</div>
+        <div class="spacer"></div>
+        <div class="hint">First run sets a password. You’ll stay signed in on this device until you sign out.</div>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards" id="cards"></div>
+  </div>
+
+  <!-- New / Edit modal -->
+  <div class="modal-backdrop" id="modalNew">
+    <div class="modal panel" style="padding:14px">
+      <h3 id="modalTitle" style="margin:.2rem 0 .4rem 0">New template</h3>
+      <div class="stack">
+        <input id="fTitle" class="input" placeholder="Title (e.g., Chest Wall Pain MDM)">
+        <input id="fCat" class="input" placeholder="Category (e.g., Adult, Peds, Procedures)">
+        <textarea id="fBody" class="input" style="min-height:140px" placeholder="Template text…"></textarea>
+        <div class="row">
+          <button class="btn primary" id="btnSave">Save</button>
+          <button class="btn" id="btnCancel">Cancel</button>
+          <div class="spacer"></div>
+          <button class="btn warn" id="btnDelete" title="Delete this template">Delete</button>
+        </div>
+        <div class="hint">Duplicate protection: same title + same category not allowed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign-in modal -->
+  <div class="modal-backdrop" id="modalAuth">
+    <div class="modal panel" style="padding:14px">
+      <h3 style="margin:.2rem 0 .4rem 0">Sign in</h3>
+      <div class="stack">
+        <div id="authMsg" class="hint"></div>
+        <input id="fPass" type="password" class="input" placeholder="Admin password">
+        <div class="row">
+          <button class="btn primary" id="btnAuth">Continue</button>
+        </div>
+        <div class="hr"></div>
+        <div class="hint">
+          First run: set a new password. Afterwards, you’ll stay signed in on this device (no password on refresh).
+          Use “Sign out” to lock.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <input type="file" id="fileInput" accept="application/json" style="display:none" />
+
+  <script>
+  ;(() => {
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const LS_KEY = 'rvsred_data_v2';
+    const state = {
+      data: { passwordHash:null, session:false, seq:1, cards:[] },
+      editingId: null,
+      dragId: null,
+      dragOverId: null
+    };
+
+    // --- Utilities ---
+    const sha = async (text) => {
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    };
+
+    const save = () => localStorage.setItem(LS_KEY, JSON.stringify(state.data));
+    const load = () => {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) state.data = JSON.parse(raw);
+        if (!state.data.cards) state.data.cards = [];
+        if (typeof state.data.seq !== 'number') state.data.seq = state.data.cards.length+1;
+      } catch { /* ignore */ }
+    };
+
+    const toast = (msg, ms=1400) => {
+      const el = $('#toast'); el.textContent = msg; el.classList.add('show');
+      setTimeout(()=>el.classList.remove('show'), ms);
+    };
+
+    const copyText = async (txt) => {
+      try { await navigator.clipboard.writeText(txt); toast('Copied to clipboard'); }
+      catch { toast('Copy failed'); }
+    };
+
+    const slug = s => (s||'').trim().toLowerCase().replace(/\s+/g,'-');
+    const uniqTitleInCat = (id, title, cat) =>
+      !state.data.cards.some(c => c.id!==id && slug(c.title)===slug(title) && slug(c.cat)===slug(cat));
+
+    // --- Auth ---
+    const showAuth = (firstRun) => {
+      $('#modalAuth').classList.add('show');
+      $('#authMsg').textContent = firstRun
+        ? 'Set a new admin password for this device.'
+        : 'Enter your admin password.';
+      $('#fPass').value='';
+      $('#fPass').focus();
+    };
+
+    const hideAuth = () => $('#modalAuth').classList.remove('show');
+
+    const ensureAuth = () => {
+      const firstRun = !state.data.passwordHash;
+      if (state.data.session) return true;
+      showAuth(firstRun);
+      return false;
+    };
+
+    $('#btnAuth').addEventListener('click', async () => {
+      const pwd = $('#fPass').value.trim();
+      if (!pwd) return toast('Enter a password');
+      const h = await sha(pwd);
+      if (!state.data.passwordHash) {
+        state.data.passwordHash = h;
+        state.data.session = true;
+        save();
+        hideAuth();
+        render();
+        toast('Password set. Signed in.');
+      } else if (state.data.passwordHash === h) {
+        state.data.session = true; save(); hideAuth(); render(); toast('Signed in');
+      } else {
+        toast('Wrong password', 1600);
+      }
+    });
+
+    $('#btnSignOut').addEventListener('click', () => {
+      state.data.session = false; save(); ensureAuth();
+    });
+
+    // --- Data ops ---
+    const newCard = () => ({
+      id: 'c'+(state.data.seq++),
+      title: '',
+      cat: '',
+      body: '',
+      createdAt: Date.now(),
+      order: state.data.cards.length ? Math.max(...state.data.cards.map(c=>c.order))+1 : 1
+    });
+
+    const upsertCard = (draft) => {
+      const i = state.data.cards.findIndex(c => c.id === draft.id);
+      if (i === -1) state.data.cards.push(draft);
+      else state.data.cards[i] = {...state.data.cards[i], ...draft};
+      save(); renderCards();
+    };
+
+    const deleteCard = (id) => {
+      state.data.cards = state.data.cards.filter(c=>c.id!==id);
+      save(); renderCards();
+    };
+
+    // --- Modal New/Edit ---
+    const openModal = (card=null) => {
+      state.editingId = card ? card.id : null;
+      $('#modalTitle').textContent = card ? 'Edit template' : 'New template';
+      $('#fTitle').value = card?.title || '';
+      $('#fCat').value = card?.cat || '';
+      $('#fBody').value = card?.body || '';
+      $('#btnDelete').style.display = card ? 'inline-block' : 'none';
+      $('#modalNew').classList.add('show');
+      setTimeout(()=>$('#fTitle').focus(), 30);
+    };
+    const closeModal = () => $('#modalNew').classList.remove('show');
+
+    $('#btnAdd').addEventListener('click', () => openModal());
+    $('#btnCancel').addEventListener('click', closeModal);
+    $('#btnDelete').addEventListener('click', () => {
+      if (!state.editingId) return;
+      deleteCard(state.editingId);
+      closeModal();
+      toast('Deleted');
+    });
+
+    $('#btnSave').addEventListener('click', () => {
+      const title = $('#fTitle').value.trim();
+      const cat   = $('#fCat').value.trim();
+      const body  = $('#fBody').value;
+      if (!title) return toast('Title required');
+      if (!uniqTitleInCat(state.editingId, title, cat)) return toast('Duplicate title in this category');
+      if (state.editingId) {
+        const prev = state.data.cards.find(c=>c.id===state.editingId);
+        upsertCard({ id: state.editingId, title, cat, body, order: prev.order });
+        toast('Saved');
+      } else {
+        const c = newCard(); c.title=title; c.cat=cat; c.body=body;
+        upsertCard(c); toast('Added');
+      }
+      closeModal(); refreshCats();
+    });
+
+    // --- Render ---
+    const render = () => {
+      if (!state.data.session) return;
+      refreshCats();
+      renderCards();
+    };
+
+    const refreshCats = () => {
+      const sel = $('#filterCat');
+      const cur = sel.value;
+      const cats = Array.from(new Set(state.data.cards.map(c=>c.cat).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+      sel.innerHTML = '<option value="">All categories</option>' + cats.map(c=>`<option>${c}</option>`).join('');
+      if ([...sel.options].some(o=>o.value===cur)) sel.value = cur;
+    };
+
+    const cardEl = (c) => {
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.setAttribute('draggable','true');
+      el.dataset.id = c.id;
+
+      const h = document.createElement('h3'); h.textContent = c.title; el.appendChild(h);
+      const sm = document.createElement('small'); sm.textContent = c.cat || 'Uncategorized'; el.appendChild(sm);
+      const ta = document.createElement('textarea'); ta.value = c.body; el.appendChild(ta);
+
+      const actions = document.createElement('div'); actions.className='actions'; el.appendChild(actions);
+      const bSave = document.createElement('button'); bSave.className='btn ok'; bSave.textContent='Save';
+      const bCopy = document.createElement('button'); bCopy.className='btn'; bCopy.textContent='Copy';
+      const bEdit = document.createElement('button'); bEdit.className='btn'; bEdit.textContent='Edit…';
+      const bDel  = document.createElement('button'); bDel.className='btn'; bDel.textContent='Delete';
+
+      actions.append(bSave, bCopy, bEdit, bDel);
+
+      // Inline save (preserves position/order)
+      bSave.addEventListener('click', () => {
+        upsertCard({ id:c.id, body: ta.value });
+        toast('Saved');
+      });
+      bCopy.addEventListener('click', () => copyText(ta.value));
+      bEdit.addEventListener('click', () => openModal(c));
+      bDel.addEventListener('click', () => { if (confirm('Delete this template?')) deleteCard(c.id); });
+
+      // Drag & drop ordering
+      el.addEventListener('dragstart', () => { state.dragId = c.id; el.classList.add('dragging'); });
+      el.addEventListener('dragend', () => { state.dragId = null; el.classList.remove('dragging'); });
+      el.addEventListener('dragover', (e) => { e.preventDefault(); state.dragOverId = c.id; });
+      el.addEventListener('drop', () => {
+        if (!state.dragId || state.dragId===c.id) return;
+        const a = state.data.cards.find(x=>x.id===state.dragId);
+        const b = state.data.cards.find(x=>x.id===c.id);
+        // swap orders
+        const tmp = a.order; a.order = b.order; b.order = tmp;
+        save(); renderCards();
+      });
+
+      return el;
+    };
+
+    const renderCards = () => {
+      const root = $('#cards'); root.innerHTML='';
+      const cat = $('#filterCat').value;
+      const q = $('#q').value.trim().toLowerCase();
+      let list = [...state.data.cards].sort((a,b)=>a.order-b.order || a.createdAt-b.createdAt);
+      if (cat) list = list.filter(c=> (c.cat||'') === cat);
+      if (q && !q.startsWith('.')) {
+        list = list.filter(c => c.title.toLowerCase().includes(q) || (c.cat||'').toLowerCase().includes(q) || c.body.toLowerCase().includes(q));
+      }
+      list.forEach(c => root.appendChild(cardEl(c)));
+    };
+
+    // --- Search (dot-to-copy) ---
+    const searchBox = $('#q');
+    const runDotCopy = () => {
+      const val = searchBox.value.trim();
+      if (!val.startsWith('.')) return false;
+      const term = val.substring(1).toLowerCase();
+      if (!term) return false;
+      const cat = $('#filterCat').value;
+      let list = [...state.data.cards];
+      if (cat) list = list.filter(c=> (c.cat||'') === cat);
+      const hit = list.find(c =>
+        c.title.toLowerCase().includes(term) ||
+        (c.cat||'').toLowerCase().includes(term) ||
+        c.body.toLowerCase().includes(term)
+      );
+      if (hit) { copyText(hit.body); return true; }
+      toast('No match to copy');
+      return true;
+    };
+
+    searchBox.addEventListener('input', () => {
+      if (searchBox.value.startsWith('.')) return; // don’t live-filter during dot mode
+      renderCards();
+    });
+    searchBox.addEventListener('keydown', (e) => {
+      if (e.key==='Enter' && searchBox.value.startsWith('.')) { e.preventDefault(); runDotCopy(); }
+    });
+
+    // Keyboard focus shortcut
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='k') {
+        e.preventDefault(); searchBox.focus(); searchBox.select();
+      }
+    });
+
+    // --- Import/Export ---
+    $('#btnExport').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state.data, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'rvsred-backup.json';
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+    });
+
+    $('#btnImport').addEventListener('click', () => $('#fileInput').click());
+    $('#fileInput').addEventListener('change', async (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      try {
+        const txt = await f.text();
+        const obj = JSON.parse(txt);
+        if (!obj || !Array.isArray(obj.cards)) throw new Error('Bad file');
+        // keep existing passwordHash/session; import cards & seq
+        state.data.cards = obj.cards.map(c=>({
+          id: c.id || 'c'+Math.random().toString(36).slice(2),
+          title: c.title||'',
+          cat: c.cat||'',
+          body: c.body||'',
+          createdAt: typeof c.createdAt==='number'?c.createdAt:Date.now(),
+          order: typeof c.order==='number'?c.order:1
+        }));
+        state.data.seq = typeof obj.seq==='number' ? obj.seq : (state.data.cards.length+1);
+        save(); render(); toast('Imported');
+      } catch { toast('Import failed'); }
+      e.target.value='';
+    });
+
+    // --- Init with a few example cards on true first run ---
+    const seedIfEmpty = () => {
+      if (state.data.cards.length) return;
+      const examples = [
+        {title:'Chest Wall Pain – MDM', cat:'Adult', body:'[age]-year-old presents with reproducible anterior chest wall pain… findings most consistent with musculoskeletal etiology. PERC negative. Return precautions given.'},
+        {title:'Peds AOM – MDM', cat:'Peds', body:'[age]-year-old with fever and ear pain. TM erythematous/bulging… Dx: acute otitis media. Amoxicillin dosing table… Return precautions.'},
+        {title:'Lac Repair – Procedure', cat:'Procedures', body:'Consent obtained. Wound prepped and irrigated… Closure with 4-0 nylon, simple interrupted, 6 sutures. Tdap status reviewed.'}
+      ];
+      examples.forEach(e=>{
+        const c = newCard(); c.title=e.title; c.cat=e.cat; c.body=e.body; state.data.cards.push(c);
+      });
+      save();
+    };
+
+    // --- Boot ---
+    load();
+    seedIfEmpty();
+    if (ensureAuth()) render();
+
+    // --- Filter change ---
+    $('#filterCat').addEventListener('change', renderCards);
+
+  })();
+  </script>
+</body>
+</html>
